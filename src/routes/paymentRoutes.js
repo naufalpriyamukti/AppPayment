@@ -7,5 +7,6 @@ const paymentController = require('../controllers/paymentController'); // ← IN
 router.post('/create-transaction', paymentController.createTransaction);
 router.post('/notification', paymentController.handleNotification);
 router.get('/status/:order_id', paymentController.checkStatus);
+router.post('/token', paymentController.createTransaction);
 
 module.exports = router;
