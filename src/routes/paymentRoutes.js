@@ -1,12 +1,11 @@
-// src/routes/paymentRoutes.js
+// Perbaikan:
 const express = require('express');
 const router = express.Router();
-const paymentController = require('../src/config/controllers/paymentController');
+const paymentController = require('../controllers/paymentController'); // ← INI YANG BENAR
 
-// Dipanggil Android
-router.post('/token', paymentController.createTransaction);
-
-// Dipanggil Midtrans Server (Webhook)
+// Routes
+router.post('/create-transaction', paymentController.createTransaction);
 router.post('/notification', paymentController.handleNotification);
+router.get('/status/:order_id', paymentController.checkStatus);
 
 module.exports = router;

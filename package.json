@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "test:api": "node scripts/payment_test.js",
+    "test:health": "node scripts/health_check.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "midtrans-client": "^1.4.3"
+    "midtrans-client": "^1.4.3",
+    "axios": "^1.5.0"
   }
 }

@@ -1,6 +1,6 @@
 // src/controllers/paymentController.js
-const { snap } = require('../midtrans');
-const supabase = require('../supabase');
+const { snap, coreApi } = require('../config/midtrans');
+const supabase = require('../config/supabase');
 
 // 1. Membuat Token Transaksi (Dipanggil dari Android)
 exports.createTransaction = async (req, res) => {
@@ -91,5 +91,36 @@ exports.handleNotification = async (req, res) => {
     } catch (error) {
         console.error("Webhook Error:", error);
         res.status(500).send('Error');
+    }
+};
+
+// 3. Cek Status Transaksi (Dipanggil oleh klien untuk melihat status)
+exports.checkStatus = async (req, res) => {
+    try {
+        const orderId = req.params.order_id;
+
+        // Cek di database Supabase terlebih dahulu
+        const { data, error } = await supabase
+            .from('transactions')
+            .select('id, status, snap_token')
+            .eq('id', orderId)
+            .single();
+
+        if (error) {
+            console.error('Supabase read error:', error);
+            return res.status(500).json({ status: 'error', message: error.message });
+        }
+
+        if (!data) {
+            return res.status(404).json({ status: 'not_found' });
+        }
+
+        // Kembalikan status yang tersimpan di DB. Jika perlu, Anda bisa
+        // juga memanggil Midtrans Core API untuk verifikasi realtime.
+        return res.status(200).json({ status: 'success', data });
+
+    } catch (error) {
+        console.error('Check Status Error:', error);
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
