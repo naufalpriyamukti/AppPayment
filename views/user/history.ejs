@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+
+<h2 class="mb-4">Tiket Saya</h2>
+
+<% if (transactions.length === 0) { %>
+    <div class="alert alert-info">Belum ada riwayat transaksi.</div>
+<% } %>
+
+<div class="row">
+    <% transactions.forEach(trx => { 
+        let midtransData = JSON.parse(trx.snap_token || '{}');
+        let vaNumber = midtransData.va_numbers ? midtransData.va_numbers[0].va_number : '-';
+        let statusColor = trx.status === 'success' ? 'success' : (trx.status === 'pending' ? 'warning' : 'danger');
+    %>
+    <div class="col-md-6 mb-3">
+        <div class="card p-3 h-100">
+            <div class="d-flex justify-content-between">
+                <h5 class="fw-bold"><%= trx.events ? trx.events.name : 'Event Dihapus' %></h5>
+                <span class="badge bg-<%= statusColor %> align-self-start"><%= trx.status.toUpperCase() %></span>
+            </div>
+            <p class="text-muted small mb-2">Order ID: <%= trx.order_id %></p>
+            
+            <div class="bg-light p-2 rounded mb-3">
+                <div class="d-flex justify-content-between">
+                    <span>Kategori:</span>
+                    <strong><%= trx.selected_category %></strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>VA Number:</span>
+                    <strong class="text-primary"><%= vaNumber %></strong>
+                </div>
+            </div>
+
+            <% if(trx.status === 'pending') { %>
+                <a href="/check-status/<%= trx.order_id %>" class="btn btn-sm btn-outline-dark w-100">Cek Status Pembayaran</a>
+            <% } else if (trx.status === 'success') { %>
+                <button class="btn btn-sm btn-success w-100" disabled>E-Ticket Aktif</button>
+            <% } %>
+        </div>
+    </div>
+    <% }) %>
+</div>
+
+<%- include('../partials/footer') %>

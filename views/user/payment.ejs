@@ -1,0 +1,122 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-white p-4 border-bottom">
+                <h4 class="fw-bold m-0 text-center">Konfirmasi Pemesanan</h4>
+            </div>
+            
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4 p-3 bg-light rounded-3">
+                    <img src="<%= event.image_url %>" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px; margin-right: 15px;" onerror="this.src='https://via.placeholder.com/80?text=Event'">
+                    <div>
+                        <h6 class="fw-bold mb-1"><%= event.name %></h6>
+                        <small class="text-muted d-block">📅 <%= event.date %> | ⏰ <%= event.time %></small>
+                        <small class="text-muted">📍 <%= event.location %></small>
+                    </div>
+                </div>
+
+                <% if(event.lineups && event.lineups.length > 0) { %>
+                <div class="mb-4">
+                    <label class="fw-bold mb-2 text-dark" style="font-size: 0.9rem;">🎵 Guest Star / Lineup:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <% event.lineups.forEach(artist => { %>
+                            <span class="badge bg-dark bg-opacity-75 px-3 py-2 rounded-pill fw-normal">
+                                <%= artist.artist_name %>
+                            </span>
+                        <% }) %>
+                    </div>
+                </div>
+                <% } %>
+
+                <hr class="text-muted my-4">
+
+                <form action="/process-payment" method="POST">
+                    <input type="hidden" name="event_id" value="<%= event.id %>">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Kategori Tiket</label>
+                        <select name="category" class="form-select form-select-lg" id="ticketCategory" onchange="updatePrice()">
+                            <option value="Regular" data-price="<%= event.price_regular %>">
+                                Regular - Rp <%= parseInt(event.price_regular).toLocaleString('id-ID') %>
+                            </option>
+                            <option value="VIP" data-price="<%= event.price_vip %>">
+                                VIP - Rp <%= parseInt(event.price_vip).toLocaleString('id-ID') %>
+                            </option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="price" id="priceInput" value="<%= event.price_regular %>">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Metode Pembayaran (Virtual Account)</label>
+                        <div class="d-flex flex-column gap-2">
+                            <label class="w-100 cursor-pointer">
+                                <input type="radio" name="bank" value="bca" class="btn-check" checked>
+                                <div class="btn btn-outline-primary w-100 py-3 d-flex justify-content-between align-items-center px-4 fw-bold">
+                                    <span>BCA Virtual Account</span>
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                </div>
+                            </label>
+                            
+                            <label class="w-100 cursor-pointer">
+                                <input type="radio" name="bank" value="bri" class="btn-check">
+                                <div class="btn btn-outline-primary w-100 py-3 d-flex justify-content-between align-items-center px-4 fw-bold">
+                                    <span>BRI Virtual Account</span>
+                                    <i class="bi bi-credit-card"></i>
+                                </div>
+                            </label>
+
+                            <label class="w-100 cursor-pointer">
+                                <input type="radio" name="bank" value="bni" class="btn-check">
+                                <div class="btn btn-outline-primary w-100 py-3 d-flex justify-content-between align-items-center px-4 fw-bold">
+                                    <span>BNI Virtual Account</span>
+                                    <i class="bi bi-wallet2"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 pt-3 border-top">
+                        <span class="text-muted">Total Tagihan</span>
+                        <h3 class="fw-bold text-primary m-0" id="displayPrice">
+                            Rp <%= parseInt(event.price_regular).toLocaleString('id-ID') %>
+                        </h3>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm transition-hover">
+                        Bayar Sekarang ➔
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="/" class="text-decoration-none text-muted small">
+                &larr; Batalkan dan kembali ke menu utama
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updatePrice() {
+        const select = document.getElementById('ticketCategory');
+        // Ambil harga dari atribut data-price opsi yang dipilih
+        const price = select.options[select.selectedIndex].getAttribute('data-price');
+        
+        // Update nilai input hidden (yang dikirim ke server)
+        document.getElementById('priceInput').value = price;
+        
+        // Update tampilan harga visual (Format Rupiah)
+        document.getElementById('displayPrice').innerText = 'Rp ' + parseInt(price).toLocaleString('id-ID');
+    }
+</script>
+
+<style>
+    .cursor-pointer { cursor: pointer; }
+    .transition-hover:hover { transform: translateY(-2px); transition: 0.3s; }
+</style>
+
+<%- include('../partials/footer') %>

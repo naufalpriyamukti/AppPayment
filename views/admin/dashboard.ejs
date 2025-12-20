@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Dashboard Admin</h2>
+    <a href="/admin/events/add" class="btn btn-primary">+ Tambah Event</a>
+</div>
+
+<div class="table-responsive bg-white rounded shadow-sm p-3">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Gambar</th>
+                <th>Nama Event</th>
+                <th>Waktu</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% events.forEach(ev => { %>
+            <tr>
+                <td><img src="<%= ev.image_url %>" width="60" class="rounded"></td>
+                <td>
+                    <div class="fw-bold"><%= ev.name %></div>
+                    <small class="text-muted"><%= ev.vendor_name %></small>
+                </td>
+                <td><%= ev.date %> <br> <%= ev.time %></td>
+                <td>
+                    <a href="/admin/events/<%= ev.id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/admin/events/<%= ev.id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Hapus?')">
+                        <button class="btn btn-sm btn-danger">Hapus</button>
+                    </form>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+
+<div class="text-center mb-5">
+    <h1 class="fw-bold">Jelajahi Konser</h1>
+    <p class="text-muted">Temukan panggung impianmu hari ini.</p>
+</div>
+
+<div class="row">
+    <% if (events.length === 0) { %>
+        <div class="col-12 text-center text-muted">Belum ada event tersedia.</div>
+    <% } %>
+
+    <% events.forEach(ev => { %>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <img src="<%= ev.image_url %>" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400'">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title fw-bold"><%= ev.name %></h5>
+                <p class="small text-muted mb-2">📅 <%= ev.date %> | 📍 <%= ev.location %></p>
+                <p class="text-primary fw-bold">Rp <%= parseInt(ev.price_regular).toLocaleString() %></p>
+                <a href="/checkout/<%= ev.id %>" class="btn btn-outline-primary mt-auto w-100">Beli Tiket</a>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+</div>
+
+<%- include('../partials/footer') %>
