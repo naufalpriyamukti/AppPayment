@@ -1,5 +1,54 @@
 const supabase = require('../../config/supabase');
 const coreApi = require('../../config/midtrans');
+// TAMBAHKAN FUNGSI INI:
+exports.register = async (req, res) => {
+    const { email, password, username, full_name } = req.body;
+    
+    try {
+        // 1. Daftar ke Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password
+        });
+
+        if (error) throw error;
+
+        // 2. Simpan Data Tambahan ke Tabel Profiles
+        if (data.user) {
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                    {
+                        id: data.user.id,
+                        email: email,
+                        username: username,
+                        full_name: full_name,
+                        role: 'user' // Default role
+                    }
+                ]);
+            
+            if (profileError) throw profileError;
+        }
+
+        res.json({
+            success: true,
+            message: "Registrasi Berhasil! Silakan Login.",
+            user: {
+                id: data.user?.id,
+                email: email,
+                username: username
+            }
+        });
+
+    } catch (err) {
+        res.status(400).json({ 
+            success: false, 
+            message: err.message || "Gagal Registrasi" 
+        });
+    }
+};
+
+// ... fungsi getEvents dan createTransaction biarkan saja ...
 
 // 1. Login API (Untuk Android)
 exports.loginApi = async (req, res) => {

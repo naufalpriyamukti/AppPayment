@@ -8,5 +8,6 @@ router.post('/register', androidController.registerApi);
 router.get('/events', androidController.getEvents);
 router.post('/transaction', androidController.createTransaction); // Checkout
 router.get('/status/:order_id', androidController.checkStatus);   // Polling Status
+router.post('/register', androidController.register);
 
 module.exports = router;
